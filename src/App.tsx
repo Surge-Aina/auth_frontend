@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Login from './Login';
+import SignUp from './SignUp';
 import AdminDashboard from './components/AdminDashboard';
 import ManagerDashboard from './components/ManagerDashboard';
 import WorkerDashboard from './components/WorkerDashboard';
@@ -29,6 +30,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route
               path="/admin"
               element={
@@ -40,7 +42,7 @@ function App() {
             <Route
               path="/manager"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                <ProtectedRoute allowedRoles={['manager']}>
                   <ManagerDashboard />
                 </ProtectedRoute>
               }
@@ -48,7 +50,7 @@ function App() {
             <Route
               path="/worker"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'worker']}>
+                <ProtectedRoute allowedRoles={['worker']}>
                   <WorkerDashboard />
                 </ProtectedRoute>
               }
@@ -56,7 +58,7 @@ function App() {
             <Route
               path="/customer"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'customer']}>
+                <ProtectedRoute allowedRoles={['customer']}>
                   <CustomerDashboard />
                 </ProtectedRoute>
               }

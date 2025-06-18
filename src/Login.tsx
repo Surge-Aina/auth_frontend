@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -17,14 +17,6 @@ import {
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
-// Temporary credentials (will be replaced with proper authentication tomorrow)
-const TEMP_CREDENTIALS = {
-  admin: { email: 'admin@example.com', password: 'admin123' },
-  manager: { email: 'manager@example.com', password: 'manager123' },
-  worker: { email: 'worker@example.com', password: 'worker123' },
-  customer: { email: 'customer@example.com', password: 'customer123' },
-};
-
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -36,7 +28,7 @@ const Login: React.FC = () => {
     setRole(event.target.value as UserRole);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -46,20 +38,28 @@ const Login: React.FC = () => {
       return;
     }
 
-    // Check credentials (temporary solution)
-    const credentials = TEMP_CREDENTIALS[role];
-    console.log('Attempting login with:', { email, password, role });
-    console.log('Expected credentials:', credentials);
+    try {
+      // Get stored users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      // Find user with matching email, password, and role
+      const user = users.find((u: any) => 
+        u.email === email && 
+        u.password === password && 
+        u.role === role
+      );
 
-    if (email === credentials.email && password === credentials.password) {
-      console.log('Login successful');
-      // Store role in localStorage (temporary solution)
-      localStorage.setItem('userRole', role);
-      // Navigate to the appropriate dashboard
-      navigate(`/${role}`);
-    } else {
-      console.log('Login failed');
-      setError('Invalid credentials for the selected role');
+      if (user) {
+        // Store role in localStorage
+        localStorage.setItem('userRole', role);
+        // Navigate to the appropriate dashboard
+        navigate(`/${role}`);
+      } else {
+        setError('Invalid credentials for the selected role');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An error occurred during login');
     }
   };
 
@@ -139,6 +139,23 @@ const Login: React.FC = () => {
             >
               Sign In
             </Button>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Don't have an account?
+              </Typography>
+              <Link 
+                to="/signup" 
+                style={{ 
+                  textDecoration: 'none',
+                  color: '#1976d2',
+                  fontWeight: 'bold',
+                  display: 'block',
+                  marginTop: '8px'
+                }}
+              >
+                Sign Up Now
+              </Link>
+            </Box>
           </Box>
         </Paper>
       </Box>
