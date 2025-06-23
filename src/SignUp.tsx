@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import axios from 'axios';
 import {
   Container,
   Box,
@@ -124,29 +125,31 @@ const SignUp: React.FC = () => {
    * Returns:
    *   void
    * Description:
-   * Handles successful Google signup, decodes the credential to get user info, and stores it in localStorage.
+   * Handles successful Google signup, sends the credential to the backend for verification, and navigates the user.
    */
   const handleGoogleSignUpSuccess = async (credentialResponse: CredentialResponse) => {
     console.log('Google signup success:', credentialResponse);
     if (credentialResponse.credential) {
-      // Decode the Google ID token to get user info
-      const userInfo = decodeJwt(credentialResponse.credential);
-      if (userInfo) {
-        // Store Google user info
-        localStorage.setItem('googleUser', JSON.stringify({
-          name: userInfo.name,
-          email: userInfo.email,
-          picture: userInfo.picture,
-        }));
+      try {
+        // Send Google token to backend for verification and user creation
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/google-signup`, {
+          token: credentialResponse.credential
+        });
+
+        const { role, user } = response.data;
         
-        // For Google signup, you might want to prompt for role selection
-        // For now, default to customer role
-        localStorage.setItem('userRole', 'customer');
+        // Store user info and role from backend
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('googleUser', JSON.stringify(user));
         
         setSuccess('Google account linked successfully!');
         setTimeout(() => {
-          navigate('/customer');
+          navigate(`/${role}`);
         }, 2000);
+        
+      } catch (error) {
+        console.error('Backend connection failed:', error);
+        setError('Failed to create account with backend. Please try again.');
       }
     }
   };

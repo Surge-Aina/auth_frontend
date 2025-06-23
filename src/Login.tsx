@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import axios from 'axios';
 import {
   Container,
   Box,
@@ -14,7 +16,6 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
@@ -98,22 +99,30 @@ const Login: React.FC = () => {
    * Returns:
    *   void
    * Description:
-   * Handles successful Google login, sends the credential to the backend (placeholder), and navigates the user.
+   * Handles successful Google login, sends the credential to the backend for verification, and navigates the user.
    */
   const handleGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
-    console.log('Google login success:', credentialResponse); // Debug log
+    console.log('Google login success:', credentialResponse);
     if (credentialResponse.credential) {
-      // Decode the Google ID token to get user info
-      const userInfo = decodeJwt(credentialResponse.credential);
-      if (userInfo) {
-        localStorage.setItem('googleUser', JSON.stringify({
-          name: userInfo.name,
-          email: userInfo.email,
-          picture: userInfo.picture,
-        }));
+      try {
+        // Send Google token to backend for verification
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/google`, {
+          token: credentialResponse.credential
+        });
+
+        const { role, user } = response.data;
+        
+        // Store user info and role from backend
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('googleUser', JSON.stringify(user));
+        
+        // Navigate to appropriate dashboard
+        navigate(`/${role}`);
+        
+      } catch (error) {
+        console.error('Backend connection failed:', error);
+        setError('Failed to authenticate with backend. Please try again.');
       }
-      localStorage.setItem('userRole', 'google');
-      navigate('/customer'); // Default to customer dashboard, or handle based on backend response
     }
   };
 
