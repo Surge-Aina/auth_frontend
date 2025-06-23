@@ -106,7 +106,7 @@ const Login: React.FC = () => {
     if (credentialResponse.credential) {
       try {
         // Send Google token to backend for verification
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/google`, {
+        const response = await axios.post(`${process.env.BACKEND_API_URL || 'http://localhost:5000'}/api/auth/google`, {
           token: credentialResponse.credential
         });
 
