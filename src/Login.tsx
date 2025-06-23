@@ -14,6 +14,7 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
@@ -61,6 +62,70 @@ const Login: React.FC = () => {
       console.error('Login error:', err);
       setError('An error occurred during login');
     }
+  };
+
+  /**
+   * Function: decodeJwt
+   * Parameters:
+   *   token (string): The JWT token to decode
+   * Returns:
+   *   object: The decoded payload of the JWT
+   * Description:
+   * Decodes a JWT token and returns its payload as a JavaScript object.
+   */
+  function decodeJwt(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Function: handleGoogleLoginSuccess
+   * Parameters:
+   *   credentialResponse (CredentialResponse): The response object returned by Google after successful login
+   * Returns:
+   *   void
+   * Description:
+   * Handles successful Google login, sends the credential to the backend (placeholder), and navigates the user.
+   */
+  const handleGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+    console.log('Google login success:', credentialResponse); // Debug log
+    if (credentialResponse.credential) {
+      // Decode the Google ID token to get user info
+      const userInfo = decodeJwt(credentialResponse.credential);
+      if (userInfo) {
+        localStorage.setItem('googleUser', JSON.stringify({
+          name: userInfo.name,
+          email: userInfo.email,
+          picture: userInfo.picture,
+        }));
+      }
+      localStorage.setItem('userRole', 'google');
+      navigate('/customer'); // Default to customer dashboard, or handle based on backend response
+    }
+  };
+
+  /**
+   * Function: handleGoogleLoginError
+   * Parameters: none
+   * Returns: void
+   * Description:
+   * Handles errors during Google login.
+   */
+  const handleGoogleLoginError = () => {
+    setError('Google login failed. Please try again.');
   };
 
   return (
@@ -156,6 +221,13 @@ const Login: React.FC = () => {
                 Sign Up Now
               </Link>
             </Box>
+          </Box>
+          <Box sx={{ width: '100%', mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+              width="100%"
+            />
           </Box>
         </Paper>
       </Box>
