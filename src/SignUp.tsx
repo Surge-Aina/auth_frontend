@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import {
   Container,
   Box,
@@ -12,6 +13,33 @@ import {
 } from '@mui/material';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
+
+/**
+ * Function: decodeJwt
+ * Parameters:
+ *   token (string): The JWT token to decode
+ * Returns:
+ *   object: The decoded payload of the JWT
+ * Description:
+ * Decodes a JWT token and returns its payload as a JavaScript object.
+ */
+function decodeJwt(token: string): any {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return null;
+  }
+}
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
@@ -87,6 +115,51 @@ const SignUp: React.FC = () => {
     setTimeout(() => {
       navigate('/');
     }, 2000);
+  };
+
+  /**
+   * Function: handleGoogleSignUpSuccess
+   * Parameters:
+   *   credentialResponse (CredentialResponse): The response object returned by Google after successful login
+   * Returns:
+   *   void
+   * Description:
+   * Handles successful Google signup, decodes the credential to get user info, and stores it in localStorage.
+   */
+  const handleGoogleSignUpSuccess = async (credentialResponse: CredentialResponse) => {
+    console.log('Google signup success:', credentialResponse);
+    if (credentialResponse.credential) {
+      // Decode the Google ID token to get user info
+      const userInfo = decodeJwt(credentialResponse.credential);
+      if (userInfo) {
+        // Store Google user info
+        localStorage.setItem('googleUser', JSON.stringify({
+          name: userInfo.name,
+          email: userInfo.email,
+          picture: userInfo.picture,
+        }));
+        
+        // For Google signup, you might want to prompt for role selection
+        // For now, default to customer role
+        localStorage.setItem('userRole', 'customer');
+        
+        setSuccess('Google account linked successfully!');
+        setTimeout(() => {
+          navigate('/customer');
+        }, 2000);
+      }
+    }
+  };
+
+  /**
+   * Function: handleGoogleSignUpError
+   * Parameters: none
+   * Returns: void
+   * Description:
+   * Handles errors during Google signup.
+   */
+  const handleGoogleSignUpError = () => {
+    setError('Google signup failed. Please try again.');
   };
 
   return (
@@ -191,6 +264,13 @@ const SignUp: React.FC = () => {
             >
               Sign Up
             </Button>
+          </Box>
+          
+          <Box sx={{ width: '100%', mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSignUpSuccess}
+              onError={handleGoogleSignUpError}
+            />
           </Box>
         </Paper>
       </Box>
