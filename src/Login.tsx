@@ -175,11 +175,14 @@ const Login: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ width: '100%', mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={handleGoogleLoginError}
-              width="100%"
-            />
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ mt: 2, mb: 2, textTransform: 'none' }}
+              onClick={handleGoogleLoginSuccess}
+            >
+              Sign in with Google
+            </Button>
           </Box>
         </Paper>
       </Box>
