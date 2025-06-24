@@ -16,6 +16,7 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
+import api from './api';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
@@ -41,56 +42,18 @@ const Login: React.FC = () => {
     }
 
     try {
-      // Get stored users
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      
-      // Find user with matching email, password, and role
-      const user = users.find((u: any) => 
-        u.email === email && 
-        u.password === password && 
-        u.role === role
-      );
-
-      if (user) {
-        // Store role in localStorage
-        localStorage.setItem('userRole', role);
-        // Navigate to the appropriate dashboard
-        navigate(`/${role}`);
-      } else {
-        setError('Invalid credentials for the selected role');
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('An error occurred during login');
+      // Use session-based login
+      await api.post('/auth/login', {
+        email,
+        password,
+        role
+      });
+      // Navigate to the appropriate dashboard
+      navigate(`/${role}`);
+    } catch (err: any) {
+      setError('Invalid credentials for the selected role');
     }
   };
-
-  /**
-   * Function: decodeJwt
-   * Parameters:
-   *   token (string): The JWT token to decode
-   * Returns:
-   *   object: The decoded payload of the JWT
-   * Description:
-   * Decodes a JWT token and returns its payload as a JavaScript object.
-   */
-  function decodeJwt(token: string): any {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split('')
-          .map(function (c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-          })
-          .join('')
-      );
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      return null;
-    }
-  }
 
   /**
    * Function: handleGoogleLoginSuccess
@@ -101,29 +64,9 @@ const Login: React.FC = () => {
    * Description:
    * Handles successful Google login, sends the credential to the backend for verification, and navigates the user.
    */
-  const handleGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
-    console.log('Google login success:', credentialResponse);
-    if (credentialResponse.credential) {
-      try {
-        // Send Google token to backend for verification
-        const response = await axios.post(`${process.env.BACKEND_API_URL || 'http://localhost:5000'}/api/auth/google`, {
-          token: credentialResponse.credential
-        });
-
-        const { role, user } = response.data;
-        
-        // Store user info and role from backend
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('googleUser', JSON.stringify(user));
-        
-        // Navigate to appropriate dashboard
-        navigate(`/${role}`);
-        
-      } catch (error) {
-        console.error('Backend connection failed:', error);
-        setError('Failed to authenticate with backend. Please try again.');
-      }
-    }
+  const handleGoogleLoginSuccess = async () => {
+    // Redirect to backend for Google OAuth
+    window.location.href = 'http://localhost:5000/api/auth/google';
   };
 
   /**

@@ -12,7 +12,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
  * Description: Wraps the App component with GoogleOAuthProvider for Google authentication context.
  */
 const Root = () => (
-  <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID || ''}>
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ''}>
     <App />
   </GoogleOAuthProvider>
 );

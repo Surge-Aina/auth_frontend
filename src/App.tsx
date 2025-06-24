@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,6 +9,7 @@ import ManagerDashboard from './components/ManagerDashboard';
 import WorkerDashboard from './components/WorkerDashboard';
 import CustomerDashboard from './components/CustomerDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import api from './api';
 
 // Create a theme instance
 const theme = createTheme({
@@ -23,6 +24,30 @@ const theme = createTheme({
 });
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/auth/status')
+      .then(res => {
+        if (res.data.authenticated) {
+          setUser(res.data.user);
+          console.log('User is logged in:', res.data.user);
+        } else {
+          setUser(null);
+          console.log('User not authenticated');
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setUser(null);
+        setLoading(false);
+        console.log('User not authenticated');
+      });
+  }, []);
+
+  if (loading) return null;
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

@@ -7,23 +7,9 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const userRole = localStorage.getItem('userRole');
-
-  if (!userRole) {
-    return <Navigate to="/" replace />;
-  }
-
-  // Admin has access to everything
-  if (userRole === 'admin') {
-    return <>{children}</>;
-  }
-
-  // Check if user's role is allowed
-  if (!allowedRoles.includes(userRole)) {
-    return <Navigate to={`/${userRole}`} replace />;
-  }
-
-  return <>{children}</>;
+  // TODO: Replace with session/context-based role check
+  // For now, fallback to unauthenticated
+  return <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute; 

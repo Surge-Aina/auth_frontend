@@ -6,7 +6,6 @@ const ManagerDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('userRole');
     navigate('/');
   };
 

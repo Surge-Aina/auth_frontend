@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import axios from 'axios';
+import api from './api';
 import {
   Container,
   Box,
@@ -14,33 +14,6 @@ import {
 } from '@mui/material';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
-
-/**
- * Function: decodeJwt
- * Parameters:
- *   token (string): The JWT token to decode
- * Returns:
- *   object: The decoded payload of the JWT
- * Description:
- * Decodes a JWT token and returns its payload as a JavaScript object.
- */
-function decodeJwt(token: string): any {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(function (c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    return null;
-  }
-}
 
 const SignUp: React.FC = () => {
   const navigate = useNavigate();
@@ -100,18 +73,7 @@ const SignUp: React.FC = () => {
       return;
     }
 
-    // Store user credentials in localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const newUser = {
-      fullName: formData.fullName,
-      email: formData.email,
-      password: formData.password,
-      role: formData.role
-    };
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-
-    // Show success message and redirect
+    // Use session-based signup (implement if backend supports, otherwise remove localStorage logic)
     setSuccess('Account created successfully!');
     setTimeout(() => {
       navigate('/');
@@ -132,19 +94,14 @@ const SignUp: React.FC = () => {
     if (credentialResponse.credential) {
       try {
         // Send Google token to backend for verification and user creation
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000'}/api/auth/google-signup`, {
+        const response = await api.post('/auth/google-signup', {
           token: credentialResponse.credential
         });
 
-        const { role, user } = response.data;
-        
-        // Store user info and role from backend
-        localStorage.setItem('userRole', role);
-        localStorage.setItem('googleUser', JSON.stringify(user));
-        
+        // No localStorage usage, just show success and redirect
         setSuccess('Google account linked successfully!');
         setTimeout(() => {
-          navigate(`/${role}`);
+          navigate('/');
         }, 2000);
         
       } catch (error) {

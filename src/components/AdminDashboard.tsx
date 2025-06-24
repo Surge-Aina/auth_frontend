@@ -62,7 +62,6 @@ const AdminDashboard: React.FC = () => {
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('userRole');
     navigate('/');
   };
 
