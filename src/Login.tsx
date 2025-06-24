@@ -66,7 +66,7 @@ const Login: React.FC = () => {
    */
   const handleGoogleLogin = async () => {
     // Redirect to backend for Google OAuth
-    window.location.href = 'http://localhost:5000/auth/google?role=admin';
+    window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/google?role=admin';
   };
 
   /**
@@ -82,7 +82,7 @@ const Login: React.FC = () => {
 
     const handleAuthCheck = async () => {
     try {
-      await axios.get('http://localhost:5000/auth/status', { withCredentials: true })
+      await axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
       .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
     } catch (err) {
       console.error('Auth check error:', err);

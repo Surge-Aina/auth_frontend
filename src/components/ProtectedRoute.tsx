@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/auth/status', { withCredentials: true })
+    axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
       .then(res => {
         if (res.data.authenticated) {
           setAuthenticated(true);
