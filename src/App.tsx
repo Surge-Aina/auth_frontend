@@ -56,38 +56,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/manager"
-              element={
-                <ProtectedRoute allowedRoles={['manager']}>
-                  <ManagerDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/worker"
-              element={
-                <ProtectedRoute allowedRoles={['worker']}>
-                  <WorkerDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/customer"
-              element={
-                <ProtectedRoute allowedRoles={['customer']}>
-                  <CustomerDashboard />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/manager" element={<ManagerDashboard />} />
+            <Route path="/worker" element={<WorkerDashboard />} />
+            <Route path="/customer" element={<CustomerDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
