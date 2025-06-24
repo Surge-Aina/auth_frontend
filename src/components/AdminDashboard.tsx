@@ -39,6 +39,7 @@ import {
   ExitToApp as LogoutIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'
 
 interface User {
   id: number;
@@ -61,8 +62,13 @@ const AdminDashboard: React.FC = () => {
     role: 'customer',
   });
 
-  const handleLogout = () => {
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:5000/auth/logout', { withCredentials: true });
+      navigate('/');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   const handleAddUser = () => {

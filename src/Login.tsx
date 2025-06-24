@@ -64,9 +64,9 @@ const Login: React.FC = () => {
    * Description:
    * Handles successful Google login, sends the credential to the backend for verification, and navigates the user.
    */
-  const handleGoogleLoginSuccess = async () => {
+  const handleGoogleLogin = async () => {
     // Redirect to backend for Google OAuth
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = 'http://localhost:5000/auth/google?role=admin';
   };
 
   /**
@@ -79,6 +79,15 @@ const Login: React.FC = () => {
   const handleGoogleLoginError = () => {
     setError('Google login failed. Please try again.');
   };
+
+    const handleAuthCheck = async () => {
+    try {
+      await axios.get('http://localhost:5000/auth/status', { withCredentials: true })
+      .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
+    } catch (err) {
+      console.error('Auth check error:', err);
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -175,15 +184,21 @@ const Login: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ width: '100%', mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Button
+            {/* <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+              width="100%"
+            /> */}
+            <button onClick={handleGoogleLogin}>
+              google login
+            </button>
+            {/* <Button
               variant="outlined"
               fullWidth
               sx={{ mt: 2, mb: 2, textTransform: 'none' }}
-              onClick={handleGoogleLoginSuccess}
-            >
-              Sign in with Google
-            </Button>
+              onClick={handleGoogleLogin}/> */}
           </Box>
+          <Button onClick={handleAuthCheck}>Check auth status</Button>
         </Paper>
       </Box>
     </Container>
