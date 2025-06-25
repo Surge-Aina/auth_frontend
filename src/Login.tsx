@@ -20,6 +20,13 @@ import api from './api';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
+interface UserProfile {
+  isVerified: boolean;
+  email: string;
+  role: string;
+  // Add other user fields as needed
+}
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -35,27 +42,31 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
-    try{
-       // await axios.post('http://localhost:5000/auth/login', {
-        await axios.post('https://auth-backend-zqbv.onrender.com/auth/login', {
-        //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
-          email,
-          password,
-          role
-        }, {
-          withCredentials: true
-        })
-        //navigate to role
-        navigate(`/${role}`);
-    }catch(error){
-      console.log(error)
-      setError('Invalid credentials for the selected role');
+    try {
+      // 1. Send POST to /login
+      await axios.post('/login', { email, password }, { withCredentials: true });
+      
+      // 2. JWT is automatically stored in httpOnly cookie
+      
+      // 3. Fetch /me to check verification status
+      const meResponse = await axios.get<UserProfile>('/me', { withCredentials: true });
+      
+      if (!meResponse.data.isVerified) {
+        // Handle unverified user
+        return;
+      }
+      
+      // Navigate to dashboard or home
+      navigate('/dashboard');
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('Login failed. Please check your credentials.');
     }
   }
 
@@ -101,7 +112,7 @@ const Login: React.FC = () => {
         : 'https://auth-backend-zqbv.onrender.com';
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/auth/status`, { withCredentials: true });
+      const res = await axios.get<{ authenticated: boolean }>(`${BASE_URL}/api/auth/status`, { withCredentials: true });
       console.log(`authenticated status = ${res.data.authenticated}`);
     } catch (err) {
       console.error('Auth check error:', err);
