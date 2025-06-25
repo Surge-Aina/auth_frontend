@@ -45,19 +45,23 @@ const Login: React.FC = () => {
       return;
     }
 
-    try {
-      // Use session-based login
-      await api.post('/auth/login', {
-        email,
-        password,
-        role
-      });
-      // Navigate to the appropriate dashboard
-      navigate(`/${role}`);
-    } catch (err: any) {
+    try{
+       // await axios.post('http://localhost:5000/auth/login', {
+        await axios.post('https://auth-backend-zqbv.onrender.com/api/auth/login', {
+        //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
+          email,
+          password,
+          role
+        }, {
+          withCredentials: true
+        })
+        //navigate to role
+        navigate(`/${role}`);
+    }catch(error){
+      console.log(error)
       setError('Invalid credentials for the selected role');
     }
-  };
+  }
 
   /**
    * Function: handleGoogleLoginSuccess
@@ -84,6 +88,7 @@ const Login: React.FC = () => {
     setError('Google login failed. Please try again.');
   };
 
+
   const handleAuthCheck = async () => {
     try {
       await axios.get(`${BACKEND_URL}/auth/status`, { withCredentials: true })
@@ -91,6 +96,8 @@ const Login: React.FC = () => {
     } catch (err) {
       console.error('Auth check error:', err);
     }
+
+
   }
 
   return (
@@ -173,9 +180,9 @@ const Login: React.FC = () => {
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Don't have an account?
               </Typography>
-              <Link 
-                to="/signup" 
-                style={{ 
+              <Link
+                to="/signup"
+                style={{
                   textDecoration: 'none',
                   color: '#1976d2',
                   fontWeight: 'bold',
@@ -209,4 +216,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;
