@@ -41,19 +41,23 @@ const Login: React.FC = () => {
       return;
     }
 
-    try {
-      // Use session-based login
-      await api.post('/auth/login', {
-        email,
-        password,
-        role
-      });
-      // Navigate to the appropriate dashboard
-      navigate(`/${role}`);
-    } catch (err: any) {
+    try{
+       // await axios.post('http://localhost:5000/auth/login', {
+        await axios.post('https://auth-backend-zqbv.onrender.com/auth/login', {
+        //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
+          email,
+          password,
+          role
+        }, {
+          withCredentials: true
+        })
+        //navigate to role
+        navigate(`/${role}`);
+    }catch(error){
+      console.log(error)
       setError('Invalid credentials for the selected role');
     }
-  };
+  }
 
   /**
    * Function: handleGoogleLoginSuccess
@@ -66,6 +70,8 @@ const Login: React.FC = () => {
    */
   const handleGoogleLogin = async () => {
     // Redirect to backend for Google OAuth
+    //window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google?role=admin`;
+    //window.location.href = 'http://localhost:5000/auth/google?role=admin';
     window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/google?role=admin';
   };
 
@@ -81,7 +87,10 @@ const Login: React.FC = () => {
   };
 
     const handleAuthCheck = async () => {
+      console.log(process.env.REACT_APP_BACKEND_URL)
     try {
+      //await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/status`, { withCredentials: true })
+      //await axios.get('http://localhost:5000/auth/status', { withCredentials: true })
       await axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
       .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
     } catch (err) {
@@ -205,4 +214,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default Login;

@@ -64,6 +64,8 @@ const AdminDashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      //await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/logout`, { withCredentials: true });
+     // await axios.get('http://localhost:5000/auth/logout', { withCredentials: true });
       await axios.get('https://auth-backend-zqbv.onrender.com/auth/logout', { withCredentials: true });
       navigate('/');
     } catch (err) {
