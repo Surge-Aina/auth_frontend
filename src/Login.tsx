@@ -43,7 +43,7 @@ const Login: React.FC = () => {
 
     try{
        // await axios.post('http://localhost:5000/auth/login', {
-        await axios.post('https://auth-backend-zqbv.onrender.com/auth/login', {
+        await axios.post('https://auth-backend-zqbv.onrender.com/api/auth/login', {
         //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
           email,
           password,
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
     // Redirect to backend for Google OAuth
     //window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google?role=admin`;
     //window.location.href = 'http://localhost:5000/auth/google?role=admin';
-    window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/google?role=admin';
+    window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/api/google?role=admin';
   };
 
   /**
@@ -98,10 +98,10 @@ const Login: React.FC = () => {
     const BASE_URL =
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:5000'
-        : 'https://auth-backend-zqbv.onrender.com';
+        : 'https://auth-backend-zqbv.onrender.com/api';
 
     try {
-      const res = await axios.get(`${BASE_URL}/api/auth/status`, { withCredentials: true });
+      const res = await axios.get(`${BASE_URL}/auth/status`, { withCredentials: true });
       console.log(`authenticated status = ${res.data.authenticated}`);
     } catch (err) {
       console.error('Auth check error:', err);
