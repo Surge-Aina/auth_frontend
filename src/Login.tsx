@@ -20,6 +20,10 @@ import api from './api';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
+// .env variables for backend urls
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
+const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -66,7 +70,7 @@ const Login: React.FC = () => {
    */
   const handleGoogleLogin = async () => {
     // Redirect to backend for Google OAuth
-    window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/google?role=admin';
+    window.location.href = `${BACKEND_URL}/auth/google?role=admin`;
   };
 
   /**
@@ -80,9 +84,9 @@ const Login: React.FC = () => {
     setError('Google login failed. Please try again.');
   };
 
-    const handleAuthCheck = async () => {
+  const handleAuthCheck = async () => {
     try {
-      await axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
+      await axios.get(`${BACKEND_URL}/auth/status`, { withCredentials: true })
       .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
     } catch (err) {
       console.error('Auth check error:', err);
