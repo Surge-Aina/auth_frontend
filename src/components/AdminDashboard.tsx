@@ -10,10 +10,10 @@ import {
   CardHeader,
   Button,
   List,
-  ListItem,
   ListItemText,
   ListItemIcon,
   Divider,
+  ListItemButton,
   Table,
   TableBody,
   TableCell,
@@ -99,9 +99,17 @@ const AdminDashboard: React.FC = () => {
           <Typography variant="h4" component="h1" gutterBottom>
             Admin Dashboard
           </Typography>
+
           <Typography variant="subtitle1">
             Welcome back, Admin! Here's your system overview.
           </Typography>
+
+          {/*  UI Indicator */}
+          {!localStorage.getItem('isVerified') || localStorage.getItem('isVerified') === 'false' ? (
+            <Typography variant="subtitle2" sx={{ color: 'red', fontWeight: 'bold' }}>
+              Unverified Account
+            </Typography>
+          ) : null}
         </Paper>
 
         {/* Quick Stats */}
@@ -165,33 +173,33 @@ const AdminDashboard: React.FC = () => {
                 Quick Actions
               </Typography>
               <List>
-                <ListItem button>
+                <ListItemButton>
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
                   <ListItemText primary="Manage Users" />
-                </ListItem>
+                </ListItemButton>
                 <Divider />
-                <ListItem button>
+                <ListItemButton>
                   <ListItemIcon>
                     <AssessmentIcon />
                   </ListItemIcon>
                   <ListItemText primary="View Reports" />
-                </ListItem>
+                </ListItemButton>
                 <Divider />
-                <ListItem button>
+                <ListItemButton>
                   <ListItemIcon>
                     <SettingsIcon />
                   </ListItemIcon>
                   <ListItemText primary="System Settings" />
-                </ListItem>
+                </ListItemButton>
                 <Divider />
-                <ListItem button>
+                <ListItemButton>
                   <ListItemIcon>
                     <SecurityIcon />
                   </ListItemIcon>
                   <ListItemText primary="Security Settings" />
-                </ListItem>
+                </ListItemButton>
               </List>
             </Paper>
           </Grid>
@@ -203,35 +211,35 @@ const AdminDashboard: React.FC = () => {
                 Recent Activity
               </Typography>
               <List>
-                <ListItem>
+                <ListItemButton>
                   <ListItemIcon>
                     <NotificationsIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="New user registration" 
+                  <ListItemText
+                    primary="New user registration"
                     secondary="2 minutes ago"
                   />
-                </ListItem>
+                </ListItemButton>
                 <Divider />
-                <ListItem>
+                <ListItemButton>
                   <ListItemIcon>
                     <SettingsIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="System update completed" 
+                  <ListItemText
+                    primary="System update completed"
                     secondary="1 hour ago"
                   />
-                </ListItem>
+                </ListItemButton>
                 <Divider />
-                <ListItem>
+                <ListItemButton>
                   <ListItemIcon>
                     <SecurityIcon />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Security audit completed" 
+                  <ListItemText
+                    primary="Security audit completed"
                     secondary="3 hours ago"
                   />
-                </ListItem>
+                </ListItemButton>
               </List>
             </Paper>
           </Grid>
