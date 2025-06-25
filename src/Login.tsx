@@ -80,13 +80,28 @@ const Login: React.FC = () => {
     setError('Google login failed. Please try again.');
   };
 
-    const handleAuthCheck = async () => {
+  // old handAuthCheck
+  // const handleAuthCheck = async () => {
+  // try {
+  //   await axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
+  //   .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
+  // } catch (err) {
+  //   console.error('Auth check error:', err);
+  // }
+  const handleAuthCheck = async () => {
+    const BASE_URL =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:5000'
+        : 'https://auth-backend-zqbv.onrender.com';
+
     try {
-      await axios.get('https://auth-backend-zqbv.onrender.com/auth/status', { withCredentials: true })
-      .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
+      const res = await axios.get(`${BASE_URL}/api/auth/status`, { withCredentials: true });
+      console.log(`authenticated status = ${res.data.authenticated}`);
     } catch (err) {
       console.error('Auth check error:', err);
     }
+
+
   }
 
   return (
@@ -169,9 +184,9 @@ const Login: React.FC = () => {
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Don't have an account?
               </Typography>
-              <Link 
-                to="/signup" 
-                style={{ 
+              <Link
+                to="/signup"
+                style={{
                   textDecoration: 'none',
                   color: '#1976d2',
                   fontWeight: 'bold',
