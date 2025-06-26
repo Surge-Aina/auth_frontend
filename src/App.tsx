@@ -30,7 +30,8 @@ function App() {
   useEffect(() => {
     api.get('/auth/status')
       .then(res => {
-        if (res.data.authenticated) {
+        const data = res.data as { authenticated: boolean; user?: any }; // ri -added type assertion
+        if (data.authenticated) {
           setUser(res.data.user);
           console.log('User is logged in:', res.data.user);
         } else {
