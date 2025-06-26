@@ -32,7 +32,7 @@ function App() {
       .then(res => {
         const data = res.data as { authenticated: boolean; user?: any }; // ri -added type assertion
         if (data.authenticated) {
-          setUser(res.data.user);
+          setUser(data.user);
           console.log('User is logged in:', res.data.user);
         } else {
           setUser(null);
