@@ -39,10 +39,9 @@ const CustomerDashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      //await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/logout`, { withCredentials: true });
+      await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/logout`, { withCredentials: true });
       //await axios.get('http://localhost:5000/auth/logout', { withCredentials: true });
-      await axios.get('https://auth-backend-zqbv.onrender.com/api/auth/logout', { withCredentials: true });
-      navigate('/');
+      //await axios.get('https://auth-backend-zqbv.onrender.com/api/auth/logout', { withCredentials: true });
       navigate('/');
     } catch (err) {
       console.error('Logout error:', err);
@@ -53,7 +52,7 @@ const CustomerDashboard: React.FC = () => {
     const checkVerification = async () => {
       try {
         const { data } = await axios.get<ApiResponse>(
-          'https://auth-backend-zqbv.onrender.com/api/auth/me', 
+          `${process.env.REACT_APP_BACKEND_URL}/auth/status`, 
           { 
             withCredentials: true,
             headers: {
@@ -105,7 +104,7 @@ const CustomerDashboard: React.FC = () => {
     try {
       //await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/status`, { withCredentials: true })
       //await axios.get('http://localhost:5000/auth/status', { withCredentials: true })
-      await axios.get('https://auth-backend-zqbv.onrender.com/api/auth/status', { withCredentials: true })
+      await axios.get(`${process.env.REACT_APP_BACKEND_URL}/auth/status`, { withCredentials: true })
       .then(res =>{console.log(`authenticated status = ${res.data.authenticated}`)})
     } catch (err) {
       console.error('Auth check error:', err);

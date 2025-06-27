@@ -17,6 +17,7 @@ import {
   Alert,
 } from '@mui/material';
 import api from './api';
+import { checkAuth } from './utils/authUtils';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
@@ -43,8 +44,8 @@ const Login: React.FC = () => {
 
     try{
        // await axios.post('http://localhost:5000/auth/login', {
-        await axios.post('https://auth-backend-zqbv.onrender.com/api/auth/login', {
-        //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
+        //await axios.post('https://auth-backend-zqbv.onrender.com/api/auth/login', {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
           email,
           password,
           role
@@ -70,10 +71,9 @@ const Login: React.FC = () => {
    */
   const handleGoogleLogin = async () => {
     // Redirect to backend for Google OAuth
-    //window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google?role=admin`;
-    //window.location.href = 'http://localhost:5000/auth/google?role=admin';
-    window.location.href = 'https://auth-backend-zqbv.onrender.com/auth/api/google?role=admin';
-  };
+    console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`)
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google?role=admin`;
+    };
 
   /**
    * Function: handleGoogleLoginError
@@ -94,21 +94,22 @@ const Login: React.FC = () => {
   // } catch (err) {
   //   console.error('Auth check error:', err);
   // }
-  const handleAuthCheck = async () => {
-    const BASE_URL =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:5000'
-        : 'https://auth-backend-zqbv.onrender.com/api';
+  // const handleAuthCheck = async () => {
+  //   console.log(`backend URL: ${process.env.REACT_APP_BACKEND_URL}`)
+  //   const BASE_URL =
+  //     process.env.NODE_ENV === 'development'
+  //       ? 'http://localhost:5000'
+  //       : 'https://auth-backend-zqbv.onrender.com';
 
-    try {
-      const res = await axios.get(`${BASE_URL}/auth/status`, { withCredentials: true });
-      console.log(`authenticated status = ${res.data.authenticated}`);
-    } catch (err) {
-      console.error('Auth check error:', err);
-    }
+  //   try {
+  //     const res = await axios.get(`${BASE_URL}/auth/status`, { withCredentials: true });
+  //     console.log(`authenticated status = ${res.data.authenticated}`);
+  //   } catch (err) {
+  //     console.error('Auth check error:', err);
+  //   }
 
 
-  }
+  // }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -219,7 +220,7 @@ const Login: React.FC = () => {
               sx={{ mt: 2, mb: 2, textTransform: 'none' }}
               onClick={handleGoogleLogin}/> */}
           </Box>
-          <Button onClick={handleAuthCheck}>Check auth status</Button>
+          <Button onClick={checkAuth}>Check auth status</Button>
         </Paper>
       </Box>
     </Container>

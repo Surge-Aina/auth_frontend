@@ -12,6 +12,7 @@ import {
   Alert,
   Paper,
 } from '@mui/material';
+import axios from 'axios';
 
 type UserRole = 'admin' | 'manager' | 'worker' | 'customer';
 
@@ -64,7 +65,7 @@ const SignUp: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -74,11 +75,34 @@ const SignUp: React.FC = () => {
     }
 
     // Use session-based signup (implement if backend supports, otherwise remove localStorage logic)
-    setSuccess('Account created successfully!');
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    try{  
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, 
+        {
+          email: formData.email,
+          password: formData.password,
+          name: formData.fullName,
+          role: formData.role
+        },
+        {withCredentials: true}
+      );
+
+      setSuccess('Account created successfully!');
+      setTimeout(() => {
+        navigate(`/${formData.role}`);
+      }, 2000);
+      
+    }catch(error){
+      setError('There was a problem creating account');
+      console.log("error in SignUp.tsx", error);
+      return;
+    }
   };
+
+  const handleGoogleLogin = async () => {
+    // Redirect to backend for Google OAuth
+    console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`)
+    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/auth/google?role=admin`;
+    };
 
   /**
    * Function: handleGoogleSignUpSuccess
@@ -227,10 +251,9 @@ const SignUp: React.FC = () => {
           </Box>
           
           <Box sx={{ width: '100%', mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <GoogleLogin
-              onSuccess={handleGoogleSignUpSuccess}
-              onError={handleGoogleSignUpError}
-            />
+            <button onClick={handleGoogleLogin}>
+              Sign up with Google
+            </button>
           </Box>
         </Paper>
       </Box>

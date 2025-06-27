@@ -1,19 +1,15 @@
 import React from 'react';
 import { Container, Typography, Box, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLogout } from '../utils/authUtils';
 
 const WorkerDashboard: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    navigate('/');
-  };
+  const logout = useLogout();
 
   return (
     <Container>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4">Worker Dashboard</Typography>
-        <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={logout}>Logout</Button>
       </Box>
     </Container>
   );
