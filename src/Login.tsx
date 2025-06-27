@@ -95,10 +95,11 @@ const Login: React.FC = () => {
   //   console.error('Auth check error:', err);
   // }
   const handleAuthCheck = async () => {
-    const BASE_URL =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:5000'
-        : 'https://auth-backend-zqbv.onrender.com/api';
+    const BASE_URL = `https://auth-backend-zqbv.onrender.com/api`;
+    // const BASE_URL =
+    //   process.env.NODE_ENV === 'development'
+    //     ? 'http://localhost:5000'
+    //     : 'https://auth-backend-zqbv.onrender.com/api';
 
     try {
       const res = await axios.get(`${BASE_URL}/auth/status`, { withCredentials: true });
