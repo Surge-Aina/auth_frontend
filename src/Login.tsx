@@ -42,10 +42,10 @@ const Login: React.FC = () => {
       return;
     }
 
-    try{
+    try{ 
        // await axios.post('http://localhost:5000/auth/login', {
-        //await axios.post('https://auth-backend-zqbv.onrender.com/api/auth/login', {
-        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
+        await axios.post('https://auth-backend-zqbv.onrender.com/auth/login', { //-ri: extra "/api" error was here
+        //await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
           email,
           password,
           role

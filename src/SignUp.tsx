@@ -74,6 +74,7 @@ const SignUp: React.FC = () => {
       return;
     }
 
+/*
     // Use session-based signup (implement if backend supports, otherwise remove localStorage logic)
     try{  
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/register`, 
@@ -95,6 +96,23 @@ const SignUp: React.FC = () => {
       setError('There was a problem creating account');
       console.log("error in SignUp.tsx", error);
       return;
+*/
+    try {
+      // Register the user
+      await api.post('/register', {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+
+      setSuccess('Account created successfully!');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      setError('Failed to create account. Please try again.');
+
     }
   };
 
@@ -261,4 +279,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp; 
+export default SignUp;
