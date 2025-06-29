@@ -64,7 +64,7 @@ const SignUp: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -73,11 +73,22 @@ const SignUp: React.FC = () => {
       return;
     }
 
-    // Use session-based signup (implement if backend supports, otherwise remove localStorage logic)
-    setSuccess('Account created successfully!');
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    try {
+      // Register the user
+      await api.post('/register', {
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
+
+      setSuccess('Account created successfully!');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error) {
+      setError('Failed to create account. Please try again.');
+    }
   };
 
   /**
@@ -238,4 +249,4 @@ const SignUp: React.FC = () => {
   );
 };
 
-export default SignUp; 
+export default SignUp;
